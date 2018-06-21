@@ -5,7 +5,7 @@ cd compiler ; mvn clean package ; cd ..
 *** USE COMPILER
 java -jar compiler/target/compiler.jar file.code
 -> file.class
-java filename.class
+java file.class
 
 *** LANGUAGE GRAMMAR
 
