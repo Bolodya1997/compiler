@@ -1,0 +1,6 @@
+# IDEA files
+**/.idea
+**/*.iml
+
+# compiled files
+**/target

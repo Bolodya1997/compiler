@@ -1,0 +1,122 @@
+*** BUILD PROJECT
+cd ast ; mvn clean install ; cd ..
+cd compiler ; mvn clean package ; cd ..
+
+*** USE COMPILER
+java -jar compiler/target/compiler.jar file.code
+-> file.class
+java filename.class
+
+*** LANGUAGE GRAMMAR
+
+program		:= expression {program}
+expression	:= line | block | if_condition | while_condition
+line		:= (declaration | assignment | do_print | do_invoke) "#"
+block		:= "{" program "}"
+ifCondition	:= "IF" "[" condition "]" expression ["ELSE" expression]
+whileCondition	:= "WHILE" "[" condition "]" expression
+declaration	:= ("INTEGER" | "REF") variable {"," variable}
+assignment	:= variable ":=" (integer_value | string | do_invoke |
+			do_new | variable)
+do_print	:= "PRINT" "[" [(string | variable | integer_value)] "]"
+do_invoke	:= variable "INVOKE" "[" string string string [argument
+			{"," argument}] "]"
+condition	:= "TRUE" | "FALSE" | integer_value ("==" | "!=" | ">=")
+			integer_value
+variable	:= { 'low case character' }
+integer_value	:= [[integer_value] ("+" | "-")] ('integer constant' |
+			variable) | "[" integer_value "]"
+string		:= '"' { 'character' } '"'
+do_new		:= "NEW" "[" string string [argument {"," argument}] "]"
+argument	:= variable | string | integer_value
+
+*** TYPED VARIABLES
+
+>> INTEGER a, b #
+a, b are INTEGER variables
+
+>> REF c, d #
+c, d are REF variables
+
+OK:
+>> a := b #
+>> a := 10 #
+>> a := b + 10 #
+>> c := d #
+>> c := "Hello world!" #
+>> c := NEW ...
+>> c := d INVOKE ...
+>> ... a == 10 ...
+>> ... a == b ...
+
+NOT OK:
+>> a := c #
+>> a := "Hello world!"
+>> a := NEW ...
+>> a := d INVOKE ...
+>> ... a INVOKE ...
+>> c := 10 #
+>> ... c + ...
+>> ... c == ...
+
+*** PRINT
+
+>> INTEGER i, empty #
+>> REF s, n, o, null #
+>> i := 10 #
+>> s := "kek" #
+>> n := NEW[...] #
+>> o := n INVOKE[...] #
+
+OK:
+>> PRINT[] #
+>> PRINT[10] #
+>> PRINT["kekeke"] #
+>> PRINT[i] #
+>> PRINT[s] #
+
+NOT OK:
+>> PRINT[empty] #
+>> PRINT[n] #
+>> PRINT[o] #
+>> PRINT[null] #
+
+*** NEW
+
+>> a := NEW['class name' 'constructor type' ...] #
+
+class name:
+   pac.kage.Clazz -> pac/kage/Clazz
+
+constructor type:
+   new Clazz(int, long, float, double, char, String, [Clazz]) ->
+	(IJFDCLjava/lang/String;[Lpac/kage/Clazz)V
+
+>> REF file #
+>> file := NEW["java/io/File" "(Ljava/lang/String;)V" "kek.png"] #
+
+same as:
+   java.io.File file = new java.io.File("kek.png");
+
+*** INVOKE
+
+>> REF a, b #
+>> a := NEW["pac/kage/Clazz" ...] #
+>> b := a INVOKE['class name' 'method name' 'method type' ...] #
+
+class name:
+   might be same as 'a' class or super
+
+method name:
+   Object::toString() -> toString
+
+method type:
+   Clazz foo(...) -> (...)Lpac/kageClazz;
+
+>> REF file, str #
+>> file := NEW["java/io/File" "(Ljava/lang/String;)V" "kek.png"] #
+>> str := file INVOKE["java/lang/Object" "toString" "()Ljava/lang/String;"]
+
+same as:
+   java.io.File file = new java.io.File("kek.png");
+   java.lang.String str = file.toString();

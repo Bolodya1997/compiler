@@ -1,0 +1,11 @@
+# IDEA files
+**/.idea
+**/*.iml
+
+# compiled files
+**/target
+
+# custom files
+**/*.code
+**/*.java
+**/*.class
