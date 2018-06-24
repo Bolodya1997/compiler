@@ -90,7 +90,7 @@ class name:
 
 constructor type:
    new Clazz(int, long, float, double, char, String, [Clazz]) ->
-	(IJFDCLjava/lang/String;[Lpac/kage/Clazz)V
+	(IJFDCLjava/lang/String;[Lpac/kage/Clazz;)V
 
 >> REF file #
 >> file := NEW["java/io/File" "(Ljava/lang/String;)V" "kek.png"] #
@@ -111,7 +111,7 @@ method name:
    Object::toString() -> toString
 
 method type:
-   Clazz foo(...) -> (...)Lpac/kageClazz;
+   Clazz foo(...) -> (...)Lpac/kage/Clazz;
 
 >> REF file, str #
 >> file := NEW["java/io/File" "(Ljava/lang/String;)V" "kek.png"] #
